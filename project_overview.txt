@@ -1,0 +1,62 @@
+Project overview - "db theory project"
+
+1) Languages & key files
+- Python: `server.py`, `api_test.py`, `test_system.py` (backend logic and tests)
+- JavaScript: `index.js` (frontend scripting)
+- HTML: `index.html` (UI)
+- CSS: `index.css` (styles)
+- SQL: `queries.sql`, `schema_postgres.sql`, `schema_sqlite.sql` (schema and example queries)
+
+2) Database logic (summary)
+- Schema
+  - Review `schema_postgres.sql` and `schema_sqlite.sql` for table structure, primary keys, and foreign keys.
+  - The running app currently uses `schema_sqlite.sql` and SQLite.
+  - For Postgres, the schema file exists, but code would need a Postgres client and connection.
+
+- Keys & Constraints
+  - Define clear primary keys for each table and appropriate foreign keys to enforce relationships.
+  - Add NOT NULL and UNIQUE constraints where applicable to prevent bad data.
+
+- Indexing
+  - Add indexes on columns used in WHERE, JOIN, ORDER BY, and GROUP BY to speed lookups.
+  - Avoid over-indexing; choose composite indexes when queries filter on several columns together.
+
+- Query patterns
+  - Use parameterized queries (or prepared statements) to prevent SQL injection.
+  - Prefer joins with filtered subqueries when joining very large tables.
+  - Paginate large result sets with LIMIT/OFFSET or keyset pagination.
+  - Avoid SELECT * in production; list needed columns.
+
+- Transactions & Concurrency
+  - Use transactions for multi-step updates or when consistency across multiple tables is required.
+  - Keep transactions short; acquire locks only when necessary.
+  - Choose an isolation level that balances correctness and performance (e.g., READ COMMITTED vs REPEATABLE READ).
+
+- Error handling & robustness
+  - Catch and log DB errors; avoid exposing raw DB errors to clients.
+  - Validate inputs before query execution (types, ranges, formats).
+
+- Security
+  - Never concatenate user input into SQL strings. Use parameter binding from your DB library or ORM.
+  - Run app with least-privileged DB user; avoid using superuser credentials.
+  - Mask or encrypt sensitive columns (PII) and restrict who can query them.
+
+- Migrations & Deployment
+  - Keep migration scripts in version control and apply them in CI/CD before releasing code that depends on the new schema.
+  - Test migrations on a copy of production data when possible.
+
+- Testing & Monitoring
+  - Add unit tests for query logic and integration tests for end-to-end DB interactions.
+  - Use EXPLAIN / EXPLAIN ANALYZE to check query plans and address slow queries.
+  - Log slow queries and monitor connection pool usage and replica lag.
+
+3) Where to look next in this repo
+- See `queries.sql` for example queries to review or test.
+- See `server.py` for how queries are executed by the app.
+
+4) Suggested immediate actions
+- Confirm which DBMS you want to use in production (SQLite, Postgres, etc.).
+- Run the schema file against a local DB and test key queries from `queries.sql`.
+- Add a short `README.md` describing how to set up the DB locally and run tests.
+
+If you want, I can create a printable `README.md` version or add a `README.md` with setup commands.
