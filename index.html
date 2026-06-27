@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Rental System - DB Control Panel</title>
+    <link rel="stylesheet" href="index.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Ambient Background Light Effects -->
+    <div class="ambient-orb orb-violet"></div>
+    <div class="ambient-orb orb-cyan"></div>
+
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-car-rear"></i>
+                </div>
+                <h2>RentalDB</h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="bookings">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Bookings</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="vehicles">
+                    <i class="fa-solid fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="customers">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Customers</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="db-status">
+                    <span class="status-indicator online"></span>
+                    <span>SQLite Connected</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Panel Content -->
+        <main class="main-content">
+            
+            <!-- Header Bar -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h1>Vehicle Rental Control Panel</h1>
+                    <p class="subtitle">SQL Logic Verification: Double Booking Prevention & Dynamic Billing</p>
+                </div>
+                <div class="header-actions">
+                    <button id="btn-reseed" class="btn btn-secondary">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Reseed Database</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab (Default) -->
+            <section id="tab-dashboard" class="tab-pane active">
+                
+                <!-- KPI Banner Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-blue">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Fleet Size</span>
+                            <h3 id="stat-total-vehicles">-</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-green">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Active Rentals Right Now</span>
+                            <h3 id="stat-active-bookings">-</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-purple">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total System Revenue</span>
+                            <h3 id="stat-total-revenue">PKR 0.00</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Database Logic Features Overview -->
+                <div class="info-banner">
+                    <div class="info-content">
+                        <h3><i class="fa-solid fa-circle-info"></i> SQL Architecture Overview</h3>
+                        <p>
+                            This project verifies core database theories. Overlap checking is managed by database-level triggers 
+                            (preventing double bookings) and pricing calculations are dynamically resolved at query-time via SQLite 
+                            views using advanced ANSI-SQL interval mathematics.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="dashboard-tables-grid">
+                    <!-- Current Fleet Status -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2>Live Fleet Availability Status</h2>
+                            <span class="badge badge-info">Realtime</span>
+                        </div>
+                        <div class="table-container">
+                            <table id="table-availability">
+                                <thead>
+                                    <tr>
+                                        <th>Vehicle</th>
+                                        <th>License Plate</th>
+                                        <th>Availability Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="3" class="text-center">Loading live availability data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Breakdown -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2>Vehicle Financial Performance</h2>
+                            <span class="badge badge-purple">Aggregated</span>
+                        </div>
+                        <div class="table-container">
+                            <table id="table-revenue">
+                                <thead>
+                                    <tr>
+                                        <th>Vehicle ID</th>
+                                        <th>Vehicle Model</th>
+                                        <th>Total Bookings</th>
+                                        <th>Total Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="4" class="text-center">Loading financial reports...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bookings Tab -->
+            <section id="tab-bookings" class="tab-pane">
+                <div class="page-split">
+                    
+                    <!-- New Booking Form -->
+                    <div class="form-container">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h2>Create Confirmed Booking</h2>
+                            </div>
+                            <form id="form-new-booking" class="standard-form">
+                                <div class="form-group">
+                                    <label for="booking-customer">Customer</label>
+                                    <select id="booking-customer" required>
+                                        <option value="" disabled selected>Select Customer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="booking-vehicle">Vehicle</label>
+                                    <select id="booking-vehicle" required>
+                                        <option value="" disabled selected>Select Vehicle</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="booking-start">Start Date & Time</label>
+                                        <input type="datetime-local" id="booking-start" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="booking-end">End Date & Time</label>
+                                        <input type="datetime-local" id="booking-end" required>
+                                    </div>
+                                </div>
+                                
+                                <!-- Live Price Estimator (WOW factor) -->
+                                <div id="live-estimator" class="estimator-panel hidden">
+                                    <h4><i class="fa-solid fa-calculator"></i> Live Estimate (Database Rules)</h4>
+                                    <div class="estimator-details">
+                                        <div class="estimator-row">
+                                            <span>Billing Duration:</span>
+                                            <strong id="est-duration">-</strong>
+                                        </div>
+                                        <div class="estimator-row">
+                                            <span>Full Days:</span>
+                                            <span id="est-days">-</span>
+                                        </div>
+                                        <div class="estimator-row">
+                                            <span>Remaining Hours:</span>
+                                            <span id="est-hours">-</span>
+                                        </div>
+                                        <hr class="estimator-divider">
+                                        <div class="estimator-row total">
+                                            <span>Estimated Price:</span>
+                                            <strong id="est-price">PKR 0.00</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                    <span>Execute Booking</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Bookings Table -->
+                    <div class="table-card">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h2>All Bookings & Computed Bills</h2>
+                            </div>
+                            <div class="table-container">
+                                <table id="table-bookings">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Vehicle</th>
+                                            <th>Customer</th>
+                                            <th>Rental Period</th>
+                                            <th>Hours</th>
+                                            <th>Breakdown</th>
+                                            <th>Calculated Cost</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="8" class="text-center">Loading bookings...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Vehicles Tab -->
+            <section id="tab-vehicles" class="tab-pane">
+                <div class="page-split">
+                    <!-- New Vehicle Form -->
+                    <div class="form-container">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h2>Add New Vehicle</h2>
+                            </div>
+                            <form id="form-new-vehicle" class="standard-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="vehicle-make">Make</label>
+                                        <input type="text" id="vehicle-make" placeholder="e.g. Ford" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="vehicle-model">Model</label>
+                                        <input type="text" id="vehicle-model" placeholder="e.g. Explorer" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="vehicle-year">Year</label>
+                                        <input type="number" id="vehicle-year" placeholder="e.g. 2024" required min="1900" max="2100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="vehicle-plate">License Plate</label>
+                                        <input type="text" id="vehicle-plate" placeholder="e.g. SUV-2024" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="vehicle-hourly">Hourly Rate (PKR)</label>
+                                        <input type="number" id="vehicle-hourly" step="0.01" placeholder="15.00" required min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="vehicle-daily">Daily Rate (PKR)</label>
+                                        <input type="number" id="vehicle-daily" step="0.01" placeholder="75.00" required min="0">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vehicle-status">Initial Status</label>
+                                    <select id="vehicle-status">
+                                        <option value="active">Active</option>
+                                        <option value="maintenance">Maintenance</option>
+                                        <option value="retired">Retired</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fa-solid fa-circle-plus"></i>
+                                    <span>Add Vehicle</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Vehicles List Grid -->
+                    <div class="cards-list-container">
+                        <div class="vehicles-grid" id="vehicles-grid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customers Tab -->
+            <section id="tab-customers" class="tab-pane">
+                <div class="page-split">
+                    <!-- New Customer Form -->
+                    <div class="form-container">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h2>Register Customer</h2>
+                            </div>
+                            <form id="form-new-customer" class="standard-form">
+                                <div class="form-group">
+                                    <label for="customer-name">Full Name</label>
+                                    <input type="text" id="customer-name" placeholder="John Doe" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer-email">Email Address</label>
+                                    <input type="email" id="customer-email" placeholder="john@example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer-phone">Phone Number</label>
+                                    <input type="text" id="customer-phone" placeholder="555-0100">
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                    <span>Register Customer</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Customers Table -->
+                    <div class="table-card">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h2>Registered Customer Profiles</h2>
+                            </div>
+                            <div class="table-container">
+                                <table id="table-customers">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="4" class="text-center">Loading customers...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Floating Toast Notifications System -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <script src="index.js"></script>
+</body>
+</html>
